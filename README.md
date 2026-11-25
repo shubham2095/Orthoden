@@ -1,94 +1,108 @@
 # Orthoden Dental Clinic Website
 
-Website for **Orthoden Multi Speciality Dental Clinic** (Mayur Vihar, Delhi): service pages, case gallery, testimonials, FAQ and an appointment request form that emails the clinic.
+Website for **Orthoden Multi Speciality Dental Clinic** (Mayur Vihar, Delhi): services, case gallery, testimonials, FAQ and an appointment request form that emails the clinic.
 
-- **Client:** React 19, Vite, React Router, framer-motion
-- **Server:** Express 5, Nodemailer (Gmail), express-rate-limit
-- **Layout:** npm workspaces monorepo, so one install and one command run everything
+It is one Node.js app: an Express server that serves the API **and** the built React website. There is no database.
 
-## Project structure
+## Tech stack
+
+- **Frontend:** React 19 (Vite), React Router, Framer Motion, React Icons
+- **Backend:** Node.js 20.19+, Express 5, Nodemailer (Gmail)
+- **Security:** helmet, rate limiting, zod validation, HTML-escaped emails
+- **Tooling:** oxlint, concurrently
+
+## Folder structure
 
 ```
-Orthoden/
-├── package.json          Root: workspaces + scripts (dev, build, start)
-├── package-lock.json     Single lockfile for the whole repo
-├── client/               React app (Vite)
-│   ├── index.html
-│   ├── vite.config.js    Dev server + /api proxy to the Express server
-│   ├── public/           Static files and images
+.
+├── client/                    React website (Vite)
+│   ├── public/                favicon, images/{brand,home,gallery,clinic}
 │   └── src/
-│       ├── components/   Navbar, Footer, FAQ, Testimonials, FloatBtn, ScrollToTop
-│       ├── pages/        Home, About, Services, Gallery, Contact, NotFound
-│       └── utils/        Shared framer-motion animation variants
-└── server/               Express API
-    ├── index.js          App setup, CORS, rate-limited API, serves client/dist
-    ├── routes/           Route definitions (contact.js)
-    ├── controllers/      Request handlers (contactController.js)
-    └── .env.example      Required environment variables
+│       ├── App.jsx            Root component
+│       ├── PublicSite.jsx     Layout + all routes
+│       ├── components/        layout/ (Navbar, Footer, FloatingContact, ScrollToTop)
+│       │                      common/ (FAQ, Testimonials, PageTransition)
+│       ├── pages/public/      Home, About, Services, Gallery, Contact, NotFound (each with its .css)
+│       ├── services/          API helpers (api.js, contactService.js)
+│       └── utils/             Shared animation variants
+├── server/
+│   ├── server.js              Entry file
+│   ├── routes/                index.js + one file per resource (contactRoutes.js)
+│   ├── controllers/           Request handlers (contact, seo)
+│   ├── middleware/            rateLimit, validate, errorHandler
+│   ├── schemas/               zod schemas (contactSchema.js)
+│   └── services/              mailService.js
+├── .env.example               Every environment variable, with comments
+└── package.json               Backend dependencies and all scripts
 ```
 
-## Getting started
+## Run it locally
 
-Requires Node.js 20.19+ or 22.12+ (needed by Vite 8).
+1. Install everything (the root install also installs the client):
 
-```bash
-# 1. Install dependencies for client and server (one command, from the repo root)
-npm install
+   ```bash
+   npm install
+   ```
 
-# 2. Create the server config
-cp server/.env.example server/.env      # Windows PowerShell: Copy-Item server/.env.example server/.env
-#    then fill in EMAIL_USER, EMAIL_PASS and EMAIL_TO
+2. Create your environment file: copy `.env.example` to `.env` (project root) and fill in the values.
 
-# 3. Run client and server together
-npm run dev
-```
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-`npm run dev` starts both processes in one terminal:
+3. Start the website and the server together:
 
-| Process | URL | Notes |
-|---|---|---|
-| Client (Vite) | http://localhost:5173 | Open this one. If the port is taken, Vite prints the next free one. |
-| Server (Express) | http://localhost:5000 | Restarts on file changes. Vite proxies `/api` to it. |
+   ```bash
+   npm run dev
+   ```
 
-Press `Ctrl+C` once to stop both.
+   - Website: <http://localhost:5173> (Vite reloads as you edit; if the port is busy it prints the next free one)
+   - API server: <http://localhost:5000> (restarts when you edit `server/`)
 
-## Scripts (run from the repo root)
+   Vite forwards `/api` calls to the server, so the contact form works in development. Press `Ctrl+C` once to stop both.
+
+### Commands
 
 | Command | What it does |
-|---|---|
-| `npm run dev` | Client and server together, with hot reload |
-| `npm run build` | Builds the React app into `client/dist` |
-| `npm start` | Starts the Express server, which serves `client/dist` and the API |
-| `npm run preview` | Build, then start: a production-style run on one port |
+| --- | --- |
+| `npm run dev` | Website and server together, with reload |
+| `npm run dev:server` | Server only |
+| `npm run dev --prefix client` | Website only |
+| `npm run build` | Builds the website into `client/dist` |
+| `npm start` | Runs the server (serves `client/dist` and the API) |
+| `npm run lint` | Lints the client with oxlint |
 
-To run one side only: `npm run dev -w client` or `npm run dev -w server`.
+To try the production setup locally: `npm run build`, then `npm start`, then open <http://localhost:5000>.
 
-## Environment variables (`server/.env`)
+## Environment variables (`.env`)
 
 | Variable | Required | Description |
-|---|---|---|
+| --- | --- | --- |
 | `EMAIL_USER` | yes | Gmail address that sends the emails |
 | `EMAIL_PASS` | yes | Gmail **App Password** (not your normal password) |
 | `EMAIL_TO` | yes | Inbox that receives appointment requests |
 | `PORT` | no | Server port (default `5000`) |
-| `TRUST_PROXY` | no | Set to `1` when deployed behind a reverse proxy, so the rate limit works per visitor |
-| `CORS_ORIGIN` | no | Comma-separated list of sites allowed to call the API |
+| `SITE_URL` | no | Public address of the site, used in `sitemap.xml` and `robots.txt` |
+| `NODE_ENV` | no | `production` on the live site |
+| `TRUST_PROXY` | no | Number of reverse proxies in front of the app (default `1` in production). Keeps the rate limit per visitor. |
 
-`server/.env` is git-ignored. Never commit it.
+`.env` is git-ignored. Never commit it.
 
-## Contact form API
+## API
 
-`POST /api/contact` with JSON `{ name, phone, message, email?, service? }`.
+| Route | Description |
+| --- | --- |
+| `GET /api/health` | Returns `{ "status": "ok" }` |
+| `POST /api/contact` | Appointment request: `{ name, phone, message, email?, service? }` |
+| `GET /sitemap.xml`, `GET /robots.txt` | Built from `SITE_URL` |
 
-- All input is validated and HTML-escaped before it goes into the email.
-- Limited to 5 requests per IP every 15 minutes (responds `429` after that).
-- Request bodies are capped at 10 KB.
+The contact route validates input with zod, HTML-escapes everything before it goes into the email, allows 5 requests per IP every 15 minutes (then `429`), and rejects bodies over 10 KB.
 
 ## Deployment
 
-1. `npm install`
-2. `npm run build`
-3. Set the environment variables above on your host (including `TRUST_PROXY=1` behind a proxy)
+1. Set the environment variables on your host (`NODE_ENV=production`, `SITE_URL`, the three `EMAIL_*` values).
+2. `npm install`
+3. `npm run build`
 4. `npm start`
 
 One Node process serves both the site and the API, so no extra web server is needed.

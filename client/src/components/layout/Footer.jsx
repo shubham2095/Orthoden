@@ -4,7 +4,7 @@ import {
   FaPhone, FaEnvelope, FaMapMarkerAlt,
   FaClock, FaArrowRight, FaInstagram,
 } from 'react-icons/fa'
-import { staggerFast, cardVariant, fadeUp } from '../utils/animations'
+import { fadeUp } from '../../utils/animations'
 import './Footer.css'
 
 const quickLinks = [
@@ -41,7 +41,7 @@ export default function Footer() {
           <motion.div className="footer-brand" variants={fadeUp} initial="hidden" whileInView="visible" viewport={vp}>
             <div className="footer-logo">
               <img
-                src="/images/logo.png"
+                src="/images/brand/logo.png"
                 alt="Orthoden Multi Speciality Dental Clinic"
                 className="footer-logo-img"
                 onError={e => {

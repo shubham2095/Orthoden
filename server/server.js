@@ -1,0 +1,58 @@
+import path from 'path'
+import { fileURLToPath } from 'url'
+import dotenv from 'dotenv'
+import express from 'express'
+import helmet from 'helmet'
+import routes from './routes/index.js'
+import { getSitemap, getRobots } from './controllers/seoController.js'
+import { notFound, errorHandler } from './middleware/errorHandler.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// One .env file at the project root, no matter which folder the command runs from.
+dotenv.config({ path: path.join(__dirname, '..', '.env'), quiet: true })
+
+const app = express()
+const PORT = process.env.PORT || 5000
+const distPath = path.join(__dirname, '..', 'client', 'dist')
+
+// Hosting usually runs behind a reverse proxy; trusting it lets rate limiting see the real client IP.
+// Override with TRUST_PROXY (number of proxies, or false).
+const trustProxy = process.env.TRUST_PROXY ?? (process.env.NODE_ENV === 'production' ? '1' : 'false')
+app.set('trust proxy', trustProxy === 'false' ? false : Number(trustProxy) || trustProxy)
+
+app.use(
+  helmet({
+    // CSP is off for now: the site uses Google Fonts/Maps and inline styles from framer-motion.
+    contentSecurityPolicy: false,
+  }),
+)
+app.use(express.json({ limit: '10kb' }))
+
+// API
+app.use('/api', routes)
+app.use('/api', notFound)
+
+// SEO files built from SITE_URL (must come before the static files)
+app.get('/sitemap.xml', getSitemap)
+app.get('/robots.txt', getRobots)
+
+// Built React app
+app.use(express.static(distPath))
+
+// SPA fallback: any other route gets index.html so React Router can handle it (Express 5 needs a regex, not '*')
+app.get(/^\/(?!api(?:\/|$)).*/, (req, res, next) => {
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) next()
+  })
+})
+
+app.use(errorHandler)
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_TO) {
+    console.warn('Warning: EMAIL_USER, EMAIL_PASS or EMAIL_TO is not set. Contact form emails will fail.')
+  }
+})

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaTooth, FaHome, FaPhone } from 'react-icons/fa'
-import { fadeUp, staggerContainer } from '../utils/animations'
+import { fadeUp, staggerContainer } from '../../utils/animations'
 
 export default function NotFound() {
   return (

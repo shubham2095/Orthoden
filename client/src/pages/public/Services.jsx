@@ -5,8 +5,8 @@ import { MdEmergency } from 'react-icons/md'
 import { GiToothbrush } from 'react-icons/gi'
 import {
   fadeUp, fadeLeft, fadeRight, scaleIn,
-  staggerContainer, staggerFast, cardVariant,
-} from '../utils/animations'
+  staggerFast, cardVariant,
+} from '../../utils/animations'
 import './Services.css'
 
 const services = [

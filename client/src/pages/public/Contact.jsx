@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { motion } from 'framer-motion'
+import { sendContactMessage } from '../../services/contactService'
 import {
   FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock,
   FaPaperPlane, FaWhatsapp, FaCheckCircle, FaExclamationCircle,
 } from 'react-icons/fa'
 import {
   fadeUp, fadeLeft, fadeRight, scaleIn, staggerContainer, staggerFast, cardVariant,
-} from '../utils/animations'
+} from '../../utils/animations'
 import './Contact.css'
 
 const WA_LINK = `https://wa.me/918800182727?text=Hello%2C%20I%20would%20like%20to%20book%20an%20appointment%20at%20Orthoden%20Dental%20Clinic.`
@@ -63,7 +63,7 @@ export default function Contact() {
     setLoading(true)
     setStatus(null)
     try {
-      await axios.post('/api/contact', form)
+      await sendContactMessage(form)
       setStatus('success')
       setForm({ name: '', email: '', phone: '', service: '', message: '' })
     } catch {

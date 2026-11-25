@@ -9,9 +9,9 @@ import { GiToothbrush } from 'react-icons/gi'
 import {
   fadeUp, fadeLeft, fadeRight, scaleIn,
   staggerContainer, staggerFast, cardVariant,
-} from '../utils/animations'
-import Testimonials from '../components/Testimonials'
-import FAQ from '../components/FAQ'
+} from '../../utils/animations'
+import Testimonials from '../../components/common/Testimonials'
+import FAQ from '../../components/common/FAQ'
 import './Home.css'
 
 const services = [
@@ -125,7 +125,7 @@ export default function Home() {
               {/* Main tall photo */}
               <div className="hero-photo-main">
                 <img
-                  src="/images/hero.avif"
+                  src="/images/home/hero.avif"
                   alt="Orthoden Dental Clinic"
                   onError={e => { e.target.parentNode.classList.add('hero-photo-fallback'); e.target.remove() }}
                 />

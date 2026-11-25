@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaPhone, FaWhatsapp, FaTimes, FaCommentDots, FaInstagram } from 'react-icons/fa'
-import './FloatBtn.css'
+import './FloatingContact.css'
 
 const PHONE = '+918800182727'
 const WA_LINK = `https://wa.me/${PHONE}?text=Hello%2C%20I%20would%20like%20to%20book%20an%20appointment%20at%20Orthoden%20Dental%20Clinic.`
 const IG_LINK = 'https://www.instagram.com/orthodendental'
 
-export default function FloatBtn() {
+export default function FloatingContact() {
   const [open, setOpen] = useState(false)
 
   return (

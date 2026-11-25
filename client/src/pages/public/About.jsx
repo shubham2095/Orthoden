@@ -5,9 +5,9 @@ import {
   FaHeart, FaAward, FaUsers, FaStar, FaPhone,
 } from 'react-icons/fa'
 import {
-  fadeUp, fadeLeft, fadeRight, scaleIn,
+  fadeUp, fadeLeft, scaleIn,
   staggerContainer, staggerFast, cardVariant,
-} from '../utils/animations'
+} from '../../utils/animations'
 import './About.css'
 
 const values = [

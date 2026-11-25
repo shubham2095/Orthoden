@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa'
 import { MdStar } from 'react-icons/md'
 import { GiToothbrush } from 'react-icons/gi'
-import { fadeUp, staggerFast, cardVariant, scaleIn } from '../utils/animations'
+import { fadeUp, staggerFast, cardVariant, scaleIn } from '../../utils/animations'
 import './Gallery.css'
 
 const filterTabs = ['All', 'Before & After', 'Cosmetic', 'General']
@@ -19,8 +19,8 @@ const cases = [
     category: 'Cosmetic',
     tag: 'Before & After',
     desc: 'Complete smile makeover — remarkable cosmetic results.',
-    before: '/images/cases/case-5.jpg',
-    after:  '/images/cases/case-6.jpg',
+    before: '/images/gallery/case-5.jpg',
+    after:  '/images/gallery/case-6.jpg',
     type: 'beforeafter',
     featured: true,
   },
@@ -30,8 +30,8 @@ const cases = [
     category: 'Cosmetic',
     tag: 'Before & After',
     desc: 'Crooked and discoloured teeth corrected with precision treatment.',
-    before: '/images/cases/case-3.jpg',
-    after:  '/images/cases/case-7.jpg',
+    before: '/images/gallery/case-3.jpg',
+    after:  '/images/gallery/case-7.jpg',
     type: 'beforeafter',
     featured: false,
   },
@@ -41,7 +41,7 @@ const cases = [
     category: 'General',
     tag: 'General',
     desc: 'Comprehensive dental restoration addressing multiple concerns.',
-    image: '/images/cases/case-1.jpg',
+    image: '/images/gallery/case-1.jpg',
     type: 'single',
     featured: false,
   },
@@ -51,7 +51,7 @@ const cases = [
     category: 'Cosmetic',
     tag: 'Cosmetic',
     desc: 'Expert cosmetic treatment delivering natural-looking results.',
-    image: '/images/cases/case-2.jpg',
+    image: '/images/gallery/case-2.jpg',
     type: 'single',
     featured: false,
   },
@@ -61,7 +61,7 @@ const cases = [
     category: 'General',
     tag: 'General',
     desc: 'Precision-fitted ceramic crowns restoring function and aesthetics.',
-    image: '/images/cases/case-4.jpg',
+    image: '/images/gallery/case-4.jpg',
     type: 'single',
     featured: false,
   },

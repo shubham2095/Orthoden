@@ -56,7 +56,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="nav-logo" onClick={closeMenu}>
             <img
-              src="/images/logo.png"
+              src="/images/brand/logo.png"
               alt="Orthoden"
               className="nav-logo-img"
               onError={e => e.target.style.display = 'none'}
