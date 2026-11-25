@@ -13,8 +13,16 @@ const PORT = process.env.PORT || 5000
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use(cors())
-app.use(express.json())
+// Behind a reverse proxy/host (Render, Railway, nginx, ...) set TRUST_PROXY=1 so the
+// rate limiter sees each visitor's real IP instead of the proxy's.
+if (process.env.TRUST_PROXY) {
+  app.set('trust proxy', Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY)
+}
+
+// CORS_ORIGIN (optional, comma-separated) restricts which sites may call the API.
+const corsOrigin = process.env.CORS_ORIGIN
+app.use(cors(corsOrigin ? { origin: corsOrigin.split(',').map((o) => o.trim()) } : undefined))
+app.use(express.json({ limit: '10kb' }))
 
 // API routes
 app.use('/api/contact', contactRoute)
