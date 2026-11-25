@@ -2,16 +2,22 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import contactRoute from './routes/contact.js'
 
-dotenv.config()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+// Always read server/.env, no matter which directory the command is run from.
+dotenv.config({ path: path.join(__dirname, '.env'), quiet: true })
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// React build: client/dist in the monorepo (falls back to server/dist for old flat deploys).
+const monorepoDist = path.join(__dirname, '..', 'client', 'dist')
+const distDir = fs.existsSync(monorepoDist) ? monorepoDist : path.join(__dirname, 'dist')
 
 // Behind a reverse proxy/host (Render, Railway, nginx, ...) set TRUST_PROXY=1 so the
 // rate limiter sees each visitor's real IP instead of the proxy's.
@@ -28,9 +34,9 @@ app.use(express.json({ limit: '10kb' }))
 app.use('/api/contact', contactRoute)
 
 // Serve React build in production
-app.use(express.static(path.join(__dirname, 'dist')))
+app.use(express.static(distDir))
 app.get('/{*path}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+  res.sendFile(path.join(distDir, 'index.html'))
 })
 
 app.listen(PORT, () => {
