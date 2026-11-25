@@ -1,3 +1,4 @@
+import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
@@ -51,6 +52,10 @@ app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+
+  if (!fs.existsSync(path.join(distPath, 'index.html'))) {
+    console.warn('Warning: client/dist not found, so the website will not load. Run `npm run build` before `npm start`.')
+  }
 
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_TO) {
     console.warn('Warning: EMAIL_USER, EMAIL_PASS or EMAIL_TO is not set. Contact form emails will fail.')

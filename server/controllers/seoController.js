@@ -15,9 +15,10 @@ const escapeXml = (value) =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;')
 
-// SITE_URL is the public address of the website (no trailing slash).
+// SITE_URL is the public address of the website. A missing https:// and trailing slashes are fixed up.
 function siteUrl() {
-  return (process.env.SITE_URL || 'http://localhost:5000').replace(/\/+$/, '')
+  const url = (process.env.SITE_URL || 'http://localhost:5000').trim().replace(/\/+$/, '')
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`
 }
 
 export function getSitemap(req, res) {
